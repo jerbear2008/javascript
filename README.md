@@ -118,6 +118,14 @@ const verify = await client.otp.verify({
 ```
 It will return a boolean (true/false). The OTP expires 15 minutes after sending it.
 
+Want to resend an OTP? Use `client.otp.resend()`:
+```js
+const resend = await client.otp.resend({
+    otp_id: otp_id // you received this when you called client.otp.send(),
+})
+```
+OTP expiry does not renew.
+
 ## Verify formatting
 Contiguity provides two functions that verify phone number and email formatting, which are:
 

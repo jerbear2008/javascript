@@ -285,6 +285,37 @@ class Contiguity {
 
             return otpHandlerResponse.verified; // true or false.
         },
+
+        /**
+         * Resends an OTP
+         * @async
+         * @param {object} object - The object containing the OTP ID.
+         * @param {string} object.otp_id - The OTP ID, used to resend.
+         * @returns {Promise<boolean>} Returns the resent status (true or false).
+         * @throws {Error} Throws an error if the token or OTP ID is not provided or if there is an issue resending.
+         */
+        resend: async (object) => {
+            if (!this.token) throw new Error("Contiguity requires a token/API key to be provided via contiguity.login('token')");
+            if (!object.otp_id) throw new Error("Contiguity requires an OTP ID to be specified.");
+
+            const otpHandler = await fetch(`${this.baseURL}/otp/resend`, {
+                method: "POST",
+                body: JSON.stringify({
+                    otp_id: object.otp_id,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Token ${this.token}`,
+                },
+            });
+
+            const otpHandlerResponse = await otpHandler.json();
+
+            if (otpHandler.status !== 200) throw new Error(`Contiguity couldn't resend your OTP. Received: ${otpHandler.status} with reason: "${otpHandlerResponse.message}"`);
+            if (this.debug) console.log(`Contiguity resent your OTP (${object.otp_id}) with boolean resent status: ${otpHandlerResponse.resent}`);
+
+            return otpHandlerResponse.resent; // true or false.
+        },
     };
 
     identity = {
